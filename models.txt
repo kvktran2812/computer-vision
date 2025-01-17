@@ -1,0 +1,6 @@
+- AlexNet
+- VGGNet
+- Google Net
+- ResNet
+- Mobile Net
+- Vision Transformer (ViT)
