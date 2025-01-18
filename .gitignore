@@ -1,0 +1,5 @@
+.ipynb_checkpoints
+data/
+tiny-imagenet-200/
+models/
+models.txt
