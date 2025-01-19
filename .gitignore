@@ -3,3 +3,5 @@ data/
 tiny-imagenet-200/
 models/
 models.txt
+cifar-100/
+cifar-10/
