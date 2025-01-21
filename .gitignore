@@ -5,3 +5,4 @@ models/
 models.txt
 cifar-100/
 cifar-10/
+__pycache__
