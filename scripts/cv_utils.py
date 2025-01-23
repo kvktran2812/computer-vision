@@ -34,7 +34,17 @@ def download_cifar100(transform, root='./cifar-100', download=True, batch_size=6
 
     return train_loader, test_loader
 
-def train(model, train_loader, optimizer, criterion, device, n_epochs:int=1, save_checkpoint:int = 10):
+def train(
+    model, 
+    train_loader, 
+    optimizer, 
+    criterion, 
+    device, 
+    model_name: str,
+    n_epochs:int=50, 
+    save_checkpoint:int = 10,
+    save_dir: str = "models"
+):
     print("Training model on device: ", device)
 
     model.to(device)
@@ -47,10 +57,10 @@ def train(model, train_loader, optimizer, criterion, device, n_epochs:int=1, sav
         batch_loss = 0.0
 
         for idx, (images, labels) in enumerate(train_loader):
-            image, label = image.to(device), label.to(device)
+            images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
-            outputs = model(image)
-            loss = criterion(outputs, label)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
@@ -63,7 +73,7 @@ def train(model, train_loader, optimizer, criterion, device, n_epochs:int=1, sav
                 print(f"Epoch {epoch+1}/{n_epochs} - Step {idx}: Loss {batch_loss:4f}")
 
         if epoch % save_checkpoint == 0:
-            torch.save(model.state_dict(), f"models/test/checkpoint_{(epoch) / save_checkpoint}.pth")
+            torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_{(epoch) / save_checkpoint}.pth")
         
         train_loss = running_loss / len(train_loader) 
         epoch_loss_history.append(train_loss)
@@ -71,5 +81,5 @@ def train(model, train_loader, optimizer, criterion, device, n_epochs:int=1, sav
         print(f"Final Eval - Epoch {epoch+1}/{n_epochs} - Train Loss: {train_loss:.4f}")
         print("#" * 20)
 
-    torch.save(model.state_dict(), f"models/test/checkpoint_final.pth")
+    torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_final.pth")
     return epoch_loss_history, batch_loss_history
