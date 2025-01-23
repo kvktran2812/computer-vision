@@ -37,12 +37,13 @@ def download_cifar100(transform, root='./cifar-100', download=True, batch_size=6
 def train(
     model, 
     train_loader, 
+    test_loader,
     optimizer, 
     criterion, 
     device, 
     model_name: str,
-    n_epochs:int=50, 
-    save_checkpoint:int = 10,
+    n_epochs:int=10, 
+    save_checkpoint:int = 1,
     save_dir: str = "models"
 ):
     print("Training model on device: ", device)
@@ -72,13 +73,25 @@ def train(
                 batch_loss_history.append(batch_loss)
                 print(f"Epoch {epoch+1}/{n_epochs} - Step {idx}: Loss {batch_loss:4f}")
 
+        # validation
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for val_images, val_labels in test_loader:
+                val_images, val_labels = val_images.to(device), val_labels.to(device)
+                val_outputs = model(val_images)
+                val_loss += criterion(val_outputs, val_labels).item() 
+
+        val_loss /= len(test_loader)
+
         if epoch % save_checkpoint == 0:
             torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_{(epoch) / save_checkpoint}.pth")
+            print(f"Saving model checkpoint to {save_dir}/{model_name}/checkpoint_{(epoch) / save_checkpoint}.pth")
         
         train_loss = running_loss / len(train_loader) 
         epoch_loss_history.append(train_loss)
         batch_loss_history.append(batch_loss)
-        print(f"Final Eval - Epoch {epoch+1}/{n_epochs} - Train Loss: {train_loss:.4f}")
+        print(f"Final Eval - Epoch {epoch+1}/{n_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
         print("#" * 20)
 
     torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_final.pth")

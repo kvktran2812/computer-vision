@@ -8,36 +8,14 @@ import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 
-# variables 
-train_dir = "../tiny-imagenet-200/train"
-val_dir = "../tiny-imagenet-200/val"
-test_dir = "../tiny-imagenet-200/test"
-save_dir = "../models/res_net"
-
-# hyperparameters
-n_epochs = 10
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# data preprocessing
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),  
-    transforms.ToTensor(),      
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
-
-train_dataset = ImageFolder(root=train_dir, transform=transform)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-
-print(f"Dataset size: {len(train_dataset)}")
-
 
 # ResNet implementation
 class Block(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(Block, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
 
@@ -95,39 +73,3 @@ class ResNet34(nn.Module):
         
         return x
     
-
-
-# model initialization
-model = ResNet34(num_classes=200).to(device)
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=5e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
-
-for epoch in range(n_epochs):
-    model.train()
-    running_loss = 0.0
-    
-    for idx, (image, label) in enumerate(train_loader):
-        image, label = image.to(device), label.to(device)
-        optimizer.zero_grad()
-        outputs = model(image)
-        loss = criterion(outputs, label)
-        loss.backward()
-        optimizer.step()
-    
-        running_loss += loss.item()
-    
-        if idx % 100 == 0:
-            print(f"Epoch {epoch+1}/{n_epochs} - Step {idx}: Loss {running_loss/idx:4f}")
-
-
-    # loss and evaluation
-    train_loss = running_loss / len(train_loader) 
-    print(f"Final Eval - Epoch {epoch+1}/{n_epochs} - Train Loss: {train_loss:.4f}")
-    print("#" * 20)
-
-    scheduler.step()
-
-    # save model
-    if epoch % 10 == 0:
-        torch.save(model.state_dict(), f"{save_dir}{epoch}.pth")
