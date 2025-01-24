@@ -182,3 +182,74 @@ class ResNet50(nn.Module):
         out = torch.flatten(out, 1)
         out = self.fc(out)
         return out
+
+
+class ResNet101(nn.Module):
+    def __init__(self, num_classes=100):
+        super(ResNet101, self).__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        )
+        self.layer1 = self.make_layer(64, 256, 64, stride=1, num_blocks=3)
+        self.layer2 = self.make_layer(256, 512, 128, stride=2, num_blocks=4)
+        self.layer3 = self.make_layer(512, 1024, 256, stride=2, num_blocks=23)
+        self.layer4 = self.make_layer(1024, 2048, 512, stride=2, num_blocks=3)
+        self.avg_pool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc = nn.Linear(2048, num_classes)
+
+    def make_layer(self, in_channels, out_channels, bottleneck_channels, stride, num_blocks):
+        layers = []
+        layers.append(BottleNeck(in_channels, out_channels, stride=stride, bottleneck_channels=bottleneck_channels))  
+        for _ in range(1, num_blocks):
+            layers.append(BottleNeck(out_channels, out_channels, bottleneck_channels=bottleneck_channels)) 
+        return nn.Sequential(*layers)
+    
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = self.avg_pool(out)
+        out = torch.flatten(out, 1)
+        out = self.fc(out)
+        return out
+
+
+
+class ResNet152(nn.Module):
+    def __init__(self, num_classes=100):
+        super(ResNet152, self).__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        )
+        self.layer1 = self.make_layer(64, 256, 64, stride=1, num_blocks=3)
+        self.layer2 = self.make_layer(256, 512, 128, stride=2, num_blocks=8)
+        self.layer3 = self.make_layer(512, 1024, 256, stride=2, num_blocks=36)
+        self.layer4 = self.make_layer(1024, 2048, 512, stride=2, num_blocks=3)
+        self.avg_pool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc = nn.Linear(2048, num_classes)
+
+    def make_layer(self, in_channels, out_channels, bottleneck_channels, stride, num_blocks):
+        layers = []
+        layers.append(BottleNeck(in_channels, out_channels, stride=stride, bottleneck_channels=bottleneck_channels))  
+        for _ in range(1, num_blocks):
+            layers.append(BottleNeck(out_channels, out_channels, bottleneck_channels=bottleneck_channels)) 
+        return nn.Sequential(*layers)
+    
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = self.avg_pool(out)
+        out = torch.flatten(out, 1)
+        out = self.fc(out)
+        return out
