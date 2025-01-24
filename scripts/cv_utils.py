@@ -55,9 +55,10 @@ def train(
     for epoch in range(n_epochs):
         model.train()
         running_loss = 0.0
-        batch_loss = 0.0
+        correct = 0
+        total = 0
 
-        for idx, (images, labels) in enumerate(train_loader):
+        for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(images)
@@ -67,32 +68,41 @@ def train(
 
             # loss update
             running_loss += loss.item()
-        
-            if idx % 100 == 0 and idx != 0:
-                batch_loss = running_loss/idx
-                batch_loss_history.append(batch_loss)
-                print(f"Epoch {epoch+1}/{n_epochs} - Step {idx}: Loss {batch_loss:4f}")
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += predicted.eq(labels).sum().item()
 
         # validation
         model.eval()
+        train_acc = 100. * correct / total
+
         val_loss = 0.0
+        correct = 0
+        total = 0
         with torch.no_grad():
             for val_images, val_labels in test_loader:
                 val_images, val_labels = val_images.to(device), val_labels.to(device)
                 val_outputs = model(val_images)
-                val_loss += criterion(val_outputs, val_labels).item() 
+                loss = criterion(val_outputs, val_labels)
+                val_loss += loss.item() 
+                _, predicted = outputs.max(1)
+                total += labels.size(0)
+                correct += predicted.eq(labels).sum().item()
 
+        val_acc = 100. * correct / total
+        
+        train_loss = running_loss / len(train_loader) 
         val_loss /= len(test_loader)
+        epoch_loss_history.append(train_loss)
+        print(f"Epoch {epoch+1}/{n_epochs}: Train Loss: {train_loss:.4f} - Val Loss: {val_loss:.4f}")
+        print(f"    Train Acc: {train_acc:.2f}% - Val Acc: {val_acc:.2f}%")
+        print("#" * 20)
 
+        # save model per checkpoint
         if epoch % save_checkpoint == 0:
             torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_{(epoch) / save_checkpoint}.pth")
             print(f"Saving model checkpoint to {save_dir}/{model_name}/checkpoint_{(epoch) / save_checkpoint}.pth")
-        
-        train_loss = running_loss / len(train_loader) 
-        epoch_loss_history.append(train_loss)
-        batch_loss_history.append(batch_loss)
-        print(f"Final Eval - Epoch {epoch+1}/{n_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-        print("#" * 20)
 
+    # save final model
     torch.save(model.state_dict(), f"{save_dir}/{model_name}/checkpoint_final.pth")
     return epoch_loss_history, batch_loss_history
