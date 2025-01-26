@@ -9,6 +9,12 @@ import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 
+
+def model_parameters(model):
+    total_params = sum([p.numel() for p in model.parameters()])
+    print(f"Total number of parameters: {total_params/1e6:.4f}M")
+    return total_params
+
 def cifar_transform():
     transform = transforms.Compose([
         transforms.ToTensor(),  # Convert image to tensor
