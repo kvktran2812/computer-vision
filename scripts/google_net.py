@@ -5,11 +5,12 @@ class InceptionConv1(nn.Module):
     def __init__(self, in_channels):
         super(InceptionConv1, self).__init__()
         self.relu = nn.ReLU()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         
-        self.conv2 = nn.Conv2d(64, 192, kernel_size=3, stride=1, padding=1)
+        self.conv1x1 = nn.Conv2d(64, 64, kernel_size=1, stride=1)
+        self.conv2 = nn.Conv2d(64, 192, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(192)
         self.pool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
@@ -19,6 +20,7 @@ class InceptionConv1(nn.Module):
         x = self.relu(x)
         x = self.pool1(x)
 
+        x = self.conv1x1(x)
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.relu(x)
