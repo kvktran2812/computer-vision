@@ -54,10 +54,12 @@ class BlockB(nn.Module):
         self.conv1 = Conv_Bn(384, in_channels, 1)
 
     def forward(self, x):
+        identity = x
         branch1 = self.branch1(x)
         branch2 = self.branch2(x)
         x = torch.concat([branch1, branch2], 1)
         x = self.conv1(x)
+        x += identity
         return x
 
 class ReductionB(nn.Module):
@@ -99,9 +101,11 @@ class BlockC(nn.Module):
         self.conv1 = Conv_Bn(448, in_channels, 1)
 
     def forward(self, x):
+        identity = x
         branch1 = self.branch1(x)
         branch2 = self.branch2(x)
         x = self.conv1(torch.concat([branch1, branch2], 1))
+        x += identity
         return x
     
 
