@@ -8,8 +8,8 @@ There are a fews things that I change different from those papers:
 # Custom implementation for CIFAR 10:
 In these notebooks, I implement similar architecture that is more suitable for smaller datasets like CIFAR 10 and CIFAR 100
 Here are full implementation:
-- [AlexNet](https://github.com/kvktran2812/computer-vision/blob/main/alex_net.ipynb)
-- [ResNet](https://github.com/kvktran2812/computer-vision/blob/main/res_net.ipynb)
+- [AlexNet](https://github.com/kvktran2812/computer-vision/blob/main/1_alex_net.ipynb)
+- [ResNet](https://github.com/kvktran2812/computer-vision/blob/main/2_res_net.ipynb)
 
 # Legacy Implementations:
 These are legacy implementation of famous papers
