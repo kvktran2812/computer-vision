@@ -10,6 +10,9 @@ In these notebooks, I implement similar architecture that is more suitable for s
 Here are full implementation:
 - [AlexNet](https://github.com/kvktran2812/computer-vision/blob/main/1_alex_net.ipynb)
 - [ResNet](https://github.com/kvktran2812/computer-vision/blob/main/2_res_net.ipynb)
+- [InceptionNet](https://github.com/kvktran2812/computer-vision/blob/main/4_google_net.ipynb)
+- [MobileNet](https://github.com/kvktran2812/computer-vision/blob/main/7_mobile_net.ipynb)
+- [SE Net](https://github.com/kvktran2812/computer-vision/blob/main/8_se_net.ipynb)
 
 # Legacy Implementations:
 These are legacy implementation of famous papers
@@ -18,3 +21,6 @@ These are legacy implementation of famous papers
 - [ResNet](https://github.com/kvktran2812/computer-vision/blob/main/scripts/res_net.py)
 - [Inception V1](https://github.com/kvktran2812/computer-vision/blob/main/scripts/google_net.py)
 - [Inception v4](https://github.com/kvktran2812/computer-vision/blob/main/scripts/inception_v4.py)
+- [Inception ResNet v2](https://github.com/kvktran2812/computer-vision/blob/main/scripts/inception_resnet_v2.py)
+- [MobileNet](https://github.com/kvktran2812/computer-vision/blob/main/scripts/mobile_net.py)
+- [SE Net](https://github.com/kvktran2812/computer-vision/blob/main/scripts/se_net.py)
