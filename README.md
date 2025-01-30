@@ -13,6 +13,7 @@ Here are full implementation:
 - [InceptionNet](https://github.com/kvktran2812/computer-vision/blob/main/4_google_net.ipynb)
 - [MobileNet](https://github.com/kvktran2812/computer-vision/blob/main/7_mobile_net.ipynb)
 - [SE Net](https://github.com/kvktran2812/computer-vision/blob/main/8_se_net.ipynb)
+- [Efficient Net](https://github.com/kvktran2812/computer-vision/blob/main/9_efficient_net.ipynb)
 
 # Legacy Implementations:
 These are legacy implementation of famous papers
@@ -24,3 +25,4 @@ These are legacy implementation of famous papers
 - [Inception ResNet v2](https://github.com/kvktran2812/computer-vision/blob/main/scripts/inception_resnet_v2.py)
 - [MobileNet](https://github.com/kvktran2812/computer-vision/blob/main/scripts/mobile_net.py)
 - [SE Net](https://github.com/kvktran2812/computer-vision/blob/main/scripts/se_net.py)
+- [Efficient Net](https://github.com/kvktran2812/computer-vision/blob/main/scripts/efficient_net.py)
